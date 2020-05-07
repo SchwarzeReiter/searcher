@@ -87,6 +87,8 @@ public class LuceneEntity {
                    QueryParser parser = new QueryParser(nameField, analyzer);
                    Query query = parser.parse(find);
                    ScoreDoc[] hits = isearcher.search(query, 1).scoreDocs;
+
+
                    if(hits.length>0){
                        System.out.println("Find in "+nameField);
                        String[] data = nameField.split("\n");
@@ -102,11 +104,9 @@ public class LuceneEntity {
                 }
 
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
-    }
+      }
     }
