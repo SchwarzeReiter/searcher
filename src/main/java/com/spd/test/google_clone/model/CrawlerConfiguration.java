@@ -22,7 +22,6 @@ public class CrawlerConfiguration  {
         config.setMaxDepthOfCrawling(2);
         config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
         config.setIncludeHttpsPages(true);
-        config.setConnectionTimeout(1);
         PageFetcher pageFetcher = new PageFetcher(config);
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
