@@ -6,40 +6,42 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
-import org.apache.lucene.queryparser.classic.ParseException;
+
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Component
-public class LuceneEntity {
+public class SearchRepository implements LuceneRepository {
 
     private static String DIR_SUFF="index_base";
     private Path TEMP;
     private Analyzer analyzer;
     private IndexWriterConfig config;
 
-    public LuceneEntity() throws IOException {
-        TEMP =  Files.createTempDirectory(DIR_SUFF);
+
+    public void init()  {
+        try {
+            TEMP =  Files.createTempDirectory(DIR_SUFF);
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
     }
 
-
-
-    public Document createDocument(String url, String text) {
+    private Document createDocument(String url, String text) {
         Document document = new Document();
         document.add(new Field(url, text, TextField.TYPE_STORED));
         return document;
@@ -62,8 +64,23 @@ public class LuceneEntity {
     }
 
 
-    public Map<String,String>Searching(String find) {
-        Map<String,String> result = new LinkedHashMap<>();
+
+    private final Comparator<WebPage> abcComparator = Comparator.comparing(WebPage::getTitle);
+
+    private final  Comparator<WebPage> relevantComparator = (webPageOne, webPageTwo) -> {
+        if(webPageOne.getScore() < webPageTwo.getScore()){return 1;}
+        if(webPageOne.getScore() > webPageTwo.getScore()){return -1;}
+        return webPageOne.getTitle().compareTo(webPageTwo.getTitle());
+    };
+
+
+
+
+
+    public List<WebPage> searchQuery(String searchQuery) {
+
+        List<WebPage> result = new ArrayList<>();
+
         try {
             Directory directory = FSDirectory.open(TEMP);
             Analyzer analyzer = new StandardAnalyzer();
@@ -85,24 +102,23 @@ public class LuceneEntity {
 
                for(String nameField : fieldName) {
                    QueryParser parser = new QueryParser(nameField, analyzer);
-                   Query query = parser.parse(find);
-                   ScoreDoc[] hits = isearcher.search(query, 1).scoreDocs;
+                   Query query = parser.parse(searchQuery);
+                   ScoreDoc[] hits = isearcher.search(query, 1, Sort.RELEVANCE,true).scoreDocs;
+
                    if(hits.length>0){
                        System.out.println("Find in "+nameField);
-                       String[] data = nameField.split("\n");
-                       if(data.length <2)
-                       {result.put(data[0],null);}
-                       result.put(data[0],data[1]);
+                       result.add(new WebPage(nameField.split("\n"),hits[0].score));
                    }
                }
                 ireader.close();
                 directory.close();
 
-                for(String key : result.keySet() )
-                {
-                    System.out.println(key+"  "+result.get(key));
-                }
+           result.sort(relevantComparator);
+            result.forEach(System.out::println);
 
+           // result.sort(abcComparator);
+            System.out.println("---------");
+            result.forEach(System.out::println);
 
         } catch (Exception e) {
             e.printStackTrace();

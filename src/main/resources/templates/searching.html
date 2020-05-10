@@ -6,9 +6,9 @@
 </head>
 <body>
 <li th:each="entry: ${result}">
-    <a th:href="@{${entry.key}}">
-        <br><span th:text="${entry.value}"></span><br>
-        <span th:text="${entry.key}"></span></a><br>
+    <a th:href="${entry.getURL()}">
+        <br><span th:text="${entry.getURL()}"></span><br>
+        <span th:text="${entry.getTitle()}"></span></a><br>
 </li>
 </body>
 </html>

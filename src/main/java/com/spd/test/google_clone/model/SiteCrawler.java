@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class SiteCrawler extends WebCrawler {
     private final static Pattern FILTERS = Pattern.compile(".*(\\\\.(css|js|gif|jpg|png|mp3|mp4|zip|gz|php))$");
-    public static LuceneEntity luceneEntity;
+    public static LuceneRepository repository;
     public static String userUrl;
 
     @Override
@@ -29,10 +29,10 @@ public class SiteCrawler extends WebCrawler {
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             String text = htmlParseData.getText();
-           Set<WebURL> links = htmlParseData.getOutgoingUrls();
+            Set<WebURL> links = htmlParseData.getOutgoingUrls();
             System.out.println("Page "+page.getWebURL().getURL());//-----------------------
             System.out.println("Number of outgoing links: " + links.size());//--------------------------
-            luceneEntity.indexingPage(page.getWebURL().getURL()+"\n"+htmlParseData.getTitle(), text);
+            repository.indexingPage(page.getWebURL().getURL()+"\n"+htmlParseData.getTitle(), text);
             links.stream().forEach(x -> System.out.println(x.getURL()));//--------------------
         }
     }

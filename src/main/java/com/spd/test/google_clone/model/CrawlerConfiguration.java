@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CrawlerConfiguration  {
 
-
     private final String CRAWL_STORAGE_FOLDER ="src/main/resources/data";
-    private final SiteCrawlerConfiguration siteCrawlerConfiguration;
-    public void crawler(String userUrl) throws Exception {
-        siteCrawlerConfiguration.initWebCrawler(userUrl);
-        int numberOfCrawlers = 100;
+    private final LuceneRepository repository;
+
+    public CrawlController crawler(String userUrl,int depth) throws Exception {
+
+        prepareSiteCrawler(userUrl);
         CrawlConfig config = new CrawlConfig();
-        config.setMaxDepthOfCrawling(2);
+        config.setMaxDepthOfCrawling(depth);
         config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
         config.setIncludeHttpsPages(true);
         PageFetcher pageFetcher = new PageFetcher(config);
@@ -27,6 +27,12 @@ public class CrawlerConfiguration  {
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
         controller.addSeed(userUrl);
-        controller.start(SiteCrawler.class, numberOfCrawlers);
+        return controller;
+    }
+
+    private void prepareSiteCrawler(String rootUrl)  {
+        SiteCrawler.userUrl = rootUrl;
+        repository.init();
+        SiteCrawler.repository = repository;
     }
 }
