@@ -1,6 +1,5 @@
 package com.spd.test.google_clone.Controllers;
 
-
 import com.spd.test.google_clone.errors.HttpNotFountError;
 import com.spd.test.google_clone.errors.RepositoryError;
 import com.spd.test.google_clone.model.*;
@@ -15,60 +14,51 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebControllers {
     private final WebIndexer webIndexer;
-    private final LuceneRepository repository;
+    private final Repository repository;
 
     @GetMapping("/")
-    public String search()
-    {
+    public String search() {
         return "search";
     }
 
     @PostMapping("/index")
-    public String index(@RequestParam(name ="q") String webSite, @RequestParam(name = "d", defaultValue = "3") String depth, Model model) throws Exception {
+    public String index(@RequestParam(name = "q") String webSite, @RequestParam(name = "d", defaultValue = "3") String depth,
+                        Model model) throws Exception {
         try {
             webIndexer.indexTheSite(webSite, Integer.parseInt(depth));
-            model.addAttribute("query",webSite);
+            model.addAttribute("query", webSite);
             return "index";
+        } catch (HttpNotFountError e) {
+            model.addAttribute("error", e.getMessage());
+            return "error";
         }
-         catch (HttpNotFountError e) {
-         model.addAttribute("error", e.getMessage());
-         return "error";
-     }
     }
 
     @GetMapping("/index")
-    public String index()
-    {
-        return "postIndex";
+    public String index() {
+        return "indexPost";
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam (name = "q",defaultValue = "") String query,
-                         @RequestParam (name = "sort", defaultValue = "0") int type, Model model)
-    {
+    public String search(@RequestParam(name = "q") String query,
+                         @RequestParam(name = "sort", defaultValue = "0") int type, Model model) {
         List<WebPage> result;
-      try {
-         result = repository.searchQuery(query,type);
-          if(result.size() == 0){
-              return "empty";
-          }
-
-         model.addAttribute("result", result);
-         model.addAttribute("query",query);
-         model.addAttribute("sort",String.valueOf(type));
-     }
-     catch (RepositoryError e)
-     {
-         model.addAttribute("error",e.getMessage());
-         return "error";
-     }
-      return "searching";
-    }
-
-    @GetMapping("/search/sort")
-    public String sort(@RequestParam  Model model)
-    {
-        model.addAttribute("result", repository.sort(repository.getResult(),1));
+        try {
+            if(query.isEmpty())
+            {
+                return "empty";
+            }
+            result = repository.searchQuery(query, type);
+            if (result.size() == 0) {
+                return "empty";
+            }
+            model.addAttribute("result", result);
+            model.addAttribute("query", query);
+            model.addAttribute("sort", String.valueOf(type));
+        } catch (RepositoryError e) {
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
         return "searching";
     }
 }

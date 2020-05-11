@@ -3,26 +3,27 @@
 <head>
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        .color {
+            color: #014901;
+        }
+    </style>
+
 </head>
 <body>
 
 
-<h10 align="left">
+<h7 align="left">
         <a th:href="'/search?q=' + ${query}+'&sort=0'"><p><input type="radio" name="sort" th:checked="${sort} == 0" value="0"> Relevant</p></a>
         <a th:href="'/search?q=' + ${query}+'&sort=1'"><p><input type="radio" name="sort" th:checked="${sort} == 1" value="1">ABC</p></a>
-</h10>
+</h7>
 
-<h3 align="center">
-    <ul th:each="entry: ${result}">
-   <p>
-       <a th:href="${entry.getURL()}">
-           <br th:text="${entry.getTitle()}">
-        <span th:text="${entry.getURL()}"></span></a>
-    </p>
-
-    </ul>
-</h3>
-
-
+<ul th:each="entry: ${result}">
+  <h2 align="left">
+      <a th:href="${entry.getURL()}"><span th:text="${entry.getTitle()}"></span>
+          <span class="color" style="font-size: small;"><br th:text="${entry.getURL()}"></span></a>
+          <span style="font-size: small;"><tag th:utext="${entry.getSimpleText()}"></tag></span>
+  </h2>
+     </ul>
 </body>
 </html>

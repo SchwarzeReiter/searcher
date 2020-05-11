@@ -1,13 +1,18 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>Search page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        #request {
+            width: 300px;
+        }
+    </style>
 </head>
 <body>
 <h1 align="center">
 <form  method="get"  action="/search">
-    <input type="text" name = "q"/>
+    <input type="text" name = "q" id="request" placeholder="Enter your request"/>
     <input type="submit" value="Search"/>
 </form>
 </h1>

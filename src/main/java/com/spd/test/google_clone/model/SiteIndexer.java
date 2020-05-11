@@ -12,26 +12,31 @@ import java.net.*;
 
 @Component
 @RequiredArgsConstructor
-public class SiteIndexer implements WebIndexer {
+public class SiteIndexer implements WebIndexer{
 
     private final CrawlerConfiguration crawlerConfiguration;
 
     public void indexTheSite(String url, int depth) throws Exception {
-        depth = depth < 0 ? 3 : depth;
-        checkURL(url);
-        CrawlController controller = crawlerConfiguration.configureMyCrawler(url, depth);
-        ;
-        controller.startNonBlocking(SiteCrawler.class, 10);
+          depth = depth < 0 ? 3 : depth;
+          checkURL(url);
+          CrawlController controller = crawlerConfiguration.configureMyCrawler(url,depth);;
+          controller.startNonBlocking(SiteCrawler.class, 10);
     }
 
     @Override
     public void checkURL(String url) throws Exception {
-        if (URLCanonicalizer.getCanonicalURL(url).isEmpty() | !checkConnection(url)) {
+        try {
+            if (URLCanonicalizer.getCanonicalURL(url).isEmpty() | !checkConnection(url)) {
+                throw new Exception();
+            }
+        }catch (Exception e)
+        {
             throw new HttpNotFountError(404);
         }
+
     }
 
-    private static boolean checkConnection(String userUrl) {
+    private static boolean checkConnection(String userUrl)  {
         try {
             final URLConnection conn = new URL(userUrl).openConnection();
             conn.connect();
