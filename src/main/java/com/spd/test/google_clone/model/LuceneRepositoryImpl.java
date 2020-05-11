@@ -1,5 +1,7 @@
 package com.spd.test.google_clone.model;
 
+import com.spd.test.google_clone.errors.RepositoryError;
+import com.spd.test.google_clone.errors.RepositoryErrorsEnum;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -24,13 +26,13 @@ import java.util.*;
 
 
 @Component
-public class SearchRepository implements LuceneRepository {
+public class LuceneRepositoryImpl implements LuceneRepository {
 
     private static String DIR_SUFF="index_base";
     private Path TEMP;
     private Analyzer analyzer;
     private IndexWriterConfig config;
-
+    public  List<WebPage> result;
 
     public void init()  {
         try {
@@ -41,14 +43,29 @@ public class SearchRepository implements LuceneRepository {
         }
     }
 
+    public List<WebPage> getResult()
+    {
+        return result;
+    }
+
+    @Override
+    public Comparator<WebPage> getABCComparator() {
+        return abcComparator;
+    }
+
+    @Override
+    public Comparator<WebPage> getRelevantComparator() {
+        return relevantComparator;
+    }
+
     private Document createDocument(String url, String text) {
         Document document = new Document();
         document.add(new Field(url, text, TextField.TYPE_STORED));
         return document;
     }
 
-    public void indexingPage(String url, String text)  {
-        Document document = createDocument(url,text);
+    public void indexingPage(String urlAndTitle, String text)  {
+        Document document = createDocument(urlAndTitle,text);
         try {
             analyzer = new StandardAnalyzer();
             config = new IndexWriterConfig(analyzer);
@@ -76,12 +93,13 @@ public class SearchRepository implements LuceneRepository {
 
 
 
+    public List<WebPage> searchQuery(String searchQuery,int type) throws RepositoryError {
 
-    public List<WebPage> searchQuery(String searchQuery) {
-
-        List<WebPage> result = new ArrayList<>();
-
-        try {
+        result = new ArrayList<>();
+        if(TEMP == null) {
+                throw new RepositoryError(RepositoryErrorsEnum.REPOSITORY_IS_EMPTY);
+            }
+           try{
             Directory directory = FSDirectory.open(TEMP);
             Analyzer analyzer = new StandardAnalyzer();
             DirectoryReader ireader = DirectoryReader.open(directory);
@@ -102,7 +120,7 @@ public class SearchRepository implements LuceneRepository {
 
                for(String nameField : fieldName) {
                    QueryParser parser = new QueryParser(nameField, analyzer);
-                   Query query = parser.parse(searchQuery);
+                   Query query = parser.parse(searchQuery.toLowerCase());
                    ScoreDoc[] hits = isearcher.search(query, 1, Sort.RELEVANCE,true).scoreDocs;
 
                    if(hits.length>0){
@@ -116,13 +134,34 @@ public class SearchRepository implements LuceneRepository {
            result.sort(relevantComparator);
             result.forEach(System.out::println);
 
+
            // result.sort(abcComparator);
             System.out.println("---------");
-            result.forEach(System.out::println);
 
-        } catch (Exception e) {
+           result.forEach(System.out::println);
+
+        }
+           catch (org.apache.lucene.index.IndexNotFoundException e)
+           {
+               e.printStackTrace();
+               throw new RepositoryError(RepositoryErrorsEnum.REPOSITORY_IS_EMPTY);
+
+           }
+           catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+
+        return sort(result,type);
       }
+
+    @Override
+    public List<WebPage> sort(List<WebPage> result, Integer type) {
+        if(type == 0)
+        {
+           result.sort(relevantComparator);
+           return result;
+        }
+        result.sort(abcComparator);
+        return result;
     }
+}

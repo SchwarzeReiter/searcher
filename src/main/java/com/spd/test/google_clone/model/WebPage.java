@@ -12,6 +12,7 @@ public class WebPage  {
     private final String Title;
     private final Float score;
 
+
     public WebPage(String[] urlAndTitle, Float score) {
         this.URL = urlAndTitle[0];
         this.Title = urlAndTitle.length > 1 ? urlAndTitle[1] : "";
@@ -42,4 +43,5 @@ public class WebPage  {
                 ", score=" + score +
                 '}';
     }
+
 }

@@ -5,10 +5,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<li th:each="entry: ${result}">
-    <a th:href="${entry.getURL()}">
-        <br><span th:text="${entry.getURL()}"></span><br>
-        <span th:text="${entry.getTitle()}"></span></a><br>
-</li>
+
+
+<h10 align="left">
+        <a th:href="'/search?q=' + ${query}+'&sort=0'"><p><input type="radio" name="sort" th:checked="${sort} == 0" value="0"> Relevant</p></a>
+        <a th:href="'/search?q=' + ${query}+'&sort=1'"><p><input type="radio" name="sort" th:checked="${sort} == 1" value="1">ABC</p></a>
+</h10>
+
+<h3 align="center">
+    <ul th:each="entry: ${result}">
+   <p>
+       <a th:href="${entry.getURL()}">
+           <br th:text="${entry.getTitle()}">
+        <span th:text="${entry.getURL()}"></span></a>
+    </p>
+
+    </ul>
+</h3>
+
+
 </body>
 </html>

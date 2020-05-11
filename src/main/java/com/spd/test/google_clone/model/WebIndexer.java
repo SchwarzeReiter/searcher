@@ -4,5 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface WebIndexer {
-    void index(String url, int depth) throws Exception;
+    void indexTheSite(String url, int depth) throws Exception;
+    void checkURL(String url) throws Exception;
+
 }

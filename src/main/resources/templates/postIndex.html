@@ -1,14 +1,17 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>Google clone: Site index</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
+<h1 align="center">Index</h1>
+<h2 align="center">
 <form  method="post"  action="/index">
+    <input type="number" name="d" min="0" max="20">
     <input type="text" name = "q"/>
-    <input type="text" name ="d"/>
     <input type="submit" value="index"/>
 </form>
+</h2>
 </body>
 </html>
