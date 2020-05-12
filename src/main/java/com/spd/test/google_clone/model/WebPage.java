@@ -13,8 +13,6 @@ public class WebPage  {
     private final String simpleText;
     private final Float score;
 
-
-
     public WebPage(String[] urlAndTitle,String simpleText, Float score) {
         this.URL = urlAndTitle[0];
         this.Title = urlAndTitle.length > 1 ? urlAndTitle[1] : "";

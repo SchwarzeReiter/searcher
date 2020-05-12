@@ -3,7 +3,6 @@ package com.spd.test.google_clone.model;
 import com.spd.test.google_clone.errors.RepositoryError;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 public interface Repository {

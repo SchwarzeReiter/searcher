@@ -119,7 +119,7 @@ public class RepositoryImpl implements Repository {
                 if (hits.length > 0) {
                     Document doc = isearcher.doc(hits[0].doc);
                     TokenStream stream = TokenSources.getAnyTokenStream(ireader, hits[0].doc, nameField, analyzer);
-                    String[] frags = highlighter.getBestFragments(stream, doc.get(nameField), 20);
+                    String[] frags = highlighter.getBestFragments(stream, doc.get(nameField), 5);
                     String simpleText = frags[0];
                     simpleText = simpleText.replaceAll("<B>", "<mark>").replaceAll("</B>", "</mark>");
                     result.add(new WebPage(nameField.split("\n"), simpleText, hits[0].score));

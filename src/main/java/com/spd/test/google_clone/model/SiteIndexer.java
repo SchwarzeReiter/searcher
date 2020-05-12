@@ -19,8 +19,8 @@ public class SiteIndexer implements WebIndexer{
     public void indexTheSite(String url, int depth) throws Exception {
           depth = depth < 0 ? 3 : depth;
           checkURL(url);
-          CrawlController controller = crawlerConfiguration.configureMyCrawler(url,depth);;
-          controller.startNonBlocking(SiteCrawler.class, 10);
+          CrawlController controller = crawlerConfiguration.configureMyCrawler(url,depth);
+          controller.start(SiteCrawler.class, 10);
     }
 
     @Override
