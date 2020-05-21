@@ -8,14 +8,14 @@ import java.util.Objects;
 @Getter
 
 public class WebPage  {
-    private final String URL;
-    private final String Title;
+    private final String url;
+    private final String title;
     private final String simpleText;
     private final Float score;
 
     public WebPage(String[] urlAndTitle,String simpleText, Float score) {
-        this.URL = urlAndTitle[0];
-        this.Title = urlAndTitle.length > 1 ? urlAndTitle[1] : "";
+        this.url = urlAndTitle[0];
+        this.title = urlAndTitle.length > 1 ? urlAndTitle[1] : "";
         this.score = score;
         this.simpleText = simpleText;
     }
@@ -24,22 +24,22 @@ public class WebPage  {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebPage webPage = (WebPage) o;
-        return Objects.equals(URL, webPage.URL) &&
-                Objects.equals(Title, webPage.Title) &&
+        return Objects.equals(url, webPage.url) &&
+                Objects.equals(title, webPage.title) &&
                 Objects.equals(score, webPage.score);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(URL, Title, score);
+        return Objects.hash(url, title, score);
     }
 
 
     @Override
     public String toString() {
         return "WebPage{" +
-                "URL='" + URL + '\'' +
-                ", Title='" + Title + '\'' +
+                "URL='" + url + '\'' +
+                ", Title='" + title + '\'' +
                 ", score=" + score +
                 '}';
     }

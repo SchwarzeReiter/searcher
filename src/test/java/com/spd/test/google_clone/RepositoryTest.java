@@ -1,33 +1,39 @@
 package com.spd.test.google_clone;
 
-import com.spd.test.google_clone.errors.RepositoryError;
-import com.spd.test.google_clone.model.Repository;
-import com.spd.test.google_clone.model.RepositoryImpl;
+import com.spd.test.google_clone.errors.RepositoryException;
+import com.spd.test.google_clone.model.IndexAndSearch;
+import com.spd.test.google_clone.model.IndexAndSearchImpl;
+import com.spd.test.google_clone.model.SortType;
 import com.spd.test.google_clone.model.WebPage;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
-
+@Component
 public class RepositoryTest {
 
-    Repository repository;
+    IndexAndSearch repository;
     Map<String[], String> testData;
     String testQueryOne;
     String testQueryTwo;
     List<WebPage> trueResult;
     List<WebPage> trueResultTwo;
+    @Autowired
+    Path getRepositoryStoragePath;
 
     private final Comparator<WebPage> abcComparator = Comparator.comparing(WebPage::getTitle);
 
     @BeforeEach
-    public void prepareData() throws IOException {
+    public void prepareData() {
         testQueryOne = "beta alpha";
         testQueryTwo = "gamma test";
-        repository = new RepositoryImpl();
+        repository = new IndexAndSearchImpl(getRepositoryStoragePath);
         repository.init();
         testData = new HashMap<>();
         trueResult = new ArrayList<>();
@@ -52,15 +58,15 @@ public class RepositoryTest {
     }
 
     @Test
-    public void Search() throws RepositoryError {
+    public void Search() throws RepositoryException {
 
-        Assert.assertArrayEquals(repository.searchQuery(testQueryOne,0).toArray(), trueResult.toArray());
+        Assert.assertArrayEquals(repository.searchQuery(testQueryOne, SortType.RELEVANT).toArray(), trueResult.toArray());
         trueResult.sort(abcComparator);
-        Assert.assertArrayEquals(repository.searchQuery(testQueryOne,1).toArray(), trueResult.toArray());
+        Assert.assertArrayEquals(repository.searchQuery(testQueryOne,SortType.ABC).toArray(), trueResult.toArray());
 
-        Assert.assertArrayEquals(repository.searchQuery(testQueryTwo,0).toArray(), trueResultTwo.toArray());
+        Assert.assertArrayEquals(repository.searchQuery(testQueryTwo,SortType.RELEVANT).toArray(), trueResultTwo.toArray());
         trueResultTwo.sort(abcComparator);
-        Assert.assertArrayEquals(repository.searchQuery(testQueryTwo,1).toArray(), trueResultTwo.toArray());
+        Assert.assertArrayEquals(repository.searchQuery(testQueryTwo,SortType.ABC).toArray(), trueResultTwo.toArray());
 
     }
 }

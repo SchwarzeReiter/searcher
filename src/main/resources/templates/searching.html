@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>Result page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
         .color {
@@ -14,14 +14,14 @@
 
 
 <h7 align="left">
-        <a th:href="'/search?q=' + ${query}+'&sort=0'"><p><input type="radio" name="sort" th:checked="${sort} == 0" value="0"> Relevant</p></a>
-        <a th:href="'/search?q=' + ${query}+'&sort=1'"><p><input type="radio" name="sort" th:checked="${sort} == 1" value="1">ABC</p></a>
+        <a th:href="'/search?q=' + ${query}+'&sort=RELEVANT'"><p><input type="radio" name="sort" th:checked="${sort} == RELEVANT" value="RELEVANT"> Relevant</p></a>
+        <a th:href="'/search?q=' + ${query}+'&sort=ABC'"><p><input type="radio" name="sort" th:checked="${sort} == ABC" value="ABC">ABC</p></a>
 </h7>
 
 <ul th:each="entry: ${result}">
   <h2 align="left">
-      <a th:href="${entry.getURL()}"><span th:text="${entry.getTitle()}"></span>
-          <span class="color" style="font-size: small;"><br th:text="${entry.getURL()}"></span></a>
+      <a th:href="${entry.getUrl()}"><span th:text="${entry.getTitle()}"></span>
+          <span class="color" style="font-size: small;"><br th:text="${entry.getUrl()}"></span></a>
           <span style="font-size: small;"><tag th:utext="${entry.getSimpleText()}"></tag></span>
   </h2>
      </ul>
