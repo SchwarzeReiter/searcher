@@ -14,6 +14,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class WebControllers {
+
     private final WebIndexer webIndexer;
     private final IndexAndSearch repository;
     private static final String ERROR_PAGE = "error";
