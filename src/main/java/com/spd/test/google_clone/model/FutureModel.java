@@ -14,4 +14,6 @@ public class FutureModel {
     private String location;
     private String local;
     private LocalDate localDate;
+    private String localSite;
+    private int countryId;
 }
